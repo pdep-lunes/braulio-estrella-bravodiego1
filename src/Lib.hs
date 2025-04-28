@@ -1,6 +1,33 @@
 module Lib () where
-
 import Text.Show.Functions ()
 
-doble :: Int -> Int
-doble x = x * 2
+data Personaje = UnPersonaje {
+    nombre :: String, 
+    poderBasico :: String, 
+    superPoder :: String,
+    poderActivo :: Bool,
+    cantidadDeVida :: Int
+    } deriving Show
+
+
+personajeEspina :: Personaje
+personajeEspina = UnPersonaje {
+    nombre = "Espina",
+    poderBasico= "Bola de espinas",
+    superPoder ="Granada de espinas",
+    poderActivo = True,
+    cantidadDeVida = 4800
+}
+
+personajePamela :: Personaje
+personajePamela = UnPersonaje {
+    nombre = "Pamela",
+    poderBasico= "Lluvia de tuercas",
+    superPoder ="Torre curativa",
+    poderActivo = False,
+    cantidadDeVida = 9600
+}
+
+
+
+
