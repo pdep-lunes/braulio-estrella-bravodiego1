@@ -28,6 +28,12 @@ personajePamela = UnPersonaje {
     cantidadDeVida = 9600
 }
 
+cantDeVida :: Int -> Int
+cantidadDeVida vida = (-1000) vida
+
+bolaEspinosa :: Personaje -> Personaje
+bolaEspinosa (nombre, poder, superPoder, poderActivo, cantidadDeVida) = UnPersonaje (cantidadDeVida = cantDeVida cantidadDeVida)
+
 
 
 
