@@ -31,18 +31,19 @@ personajePamela = UnPersonaje {
 nombres :: Personaje -> String
 nombres personaje = nombre personaje
 
-restandoVida :: Int -> Int
-restandoVida vida 
-    | vida - 1000 > 0 = vida - 1000
-    | vida - 1000 < 0 = 0
+restandoVida :: Int -> Int -> Int
+restandoVida vida danio = max (vida - danio) 0
+
+hacerDanio :: Personaje -> Int -> Personaje
+hacerDanio contrincante danio = contrincante {cantidadDeVida  = restandoVida (cantidadDeVida contrincante) danio}
 
 bolaEspinosa :: Personaje -> Personaje
-bolaEspinosa personaje = personaje {cantidadDeVida = restandoVida (cantidadDeVida personaje) } 
+bolaEspinosa contrincante = hacerDanio contrincante 1000
 
 lluviaDeTuercas :: Personaje -> String -> Personaje 
-lluviaDeTuercas personaje mismoEquipo 
-    | mismoEquipo == "mismo equipo" = personaje {cantidadDeVida = (cantidadDeVida personaje) + 800}
-    | mismoEquipo == "distinto equipo" = personaje {cantidadDeVida = (cantidadDeVida personaje) - div (cantidadDeVida personaje) 2}
+lluviaDeTuercas contrincante mismoEquipo 
+    | mismoEquipo == "mismo equipo" = contrincante {cantidadDeVida = (cantidadDeVida contrincante) + 800}
+    | mismoEquipo == "distinto equipo" = contrincante {cantidadDeVida = (cantidadDeVida contrincante) - div (cantidadDeVida contrincante) 2}
 
 
 enLasUltimas :: Personaje -> String
