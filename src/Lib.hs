@@ -24,8 +24,8 @@ pamela = UnPersonaje {
     nombre = "Pamela",
     poderBasico= "Lluvia de tuercas",
     superPoder ="Torre curativa",
-    superPoderActivo = True,
-    cantidadDeVida = 9600
+    superPoderActivo = False,
+    cantidadDeVida = 600
 }
 
 restandoVida :: Int -> Int -> Int
@@ -52,17 +52,16 @@ lluviaDeTuercas jugador mismoEquipo
 
 granadaDeEspinas :: Personaje -> Int -> Personaje
 granadaDeEspinas contrincante radio
-    | radio > 3 && cantidadDeVida contrincante < 800 =
-      hacerDanio (contrincante {
+    | radio > 3 && cantidadDeVida contrincante < 800 = contrincante {
           nombre = nombre contrincante ++ " ...Espina estuvo aqui",
-          superPoderActivo = False
-      }) (cantidadDeVida contrincante)
+          superPoderActivo = False,
+          cantidadDeVida = 0
+      }
     | radio > 3 = contrincante {nombre = nombre contrincante ++ " ...Espina estuvo aqui"}
     | otherwise = bolaEspinosa contrincante
 
 torreCurativa :: Personaje -> Personaje
 torreCurativa compaDeEquipo = vidaAequipo compaDeEquipo (cantidadDeVida compaDeEquipo)
-
 
 ataquePoderEspecialEspina :: Personaje -> Int -> Personaje
 ataquePoderEspecialEspina contrincante radio
