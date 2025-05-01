@@ -35,6 +35,7 @@ type Radio = Int
 type Modificacion = Int
 type TipoDeModificacion = String
 type Equipo = String
+type Nombre = String
 
 -- Funciones secundarias
 
@@ -53,7 +54,7 @@ vidaAequipo aliado agregado = aliado {cantidadDeVida = modificandoVida (cantidad
 esMayorA3 :: Int -> Bool
 esMayorA3 valor = valor >= 3
 
-cambioNombre :: String -> String
+cambioNombre :: Nombre -> Nombre
 cambioNombre nombre = nombre ++ " ...Espina estuvo aqui"
 
 vidaMenorA :: Personaje -> Int -> Bool
@@ -63,12 +64,6 @@ tieneElSuperActivo :: Personaje -> String
 tieneElSuperActivo personaje 
     | superPoderActivo personaje = "Si"
     | otherwise = "No"
-
-poderEspecialEspina :: Personaje -> Personaje
-poderEspecialEspina contrincante = (bolaEspinosa.granadaDeEspinas contrincante) 5 
-
-poderEspecialPamela :: Personaje -> Personaje
-poderEspecialPamela jugador = ((lluviaDeTuercas "mismo equipo").torreCurativa) jugador
 
 tienePocaVidaOno :: Personaje -> String
 tienePocaVidaOno personaje
@@ -98,6 +93,12 @@ granadaDeEspinas contrincante radio
 
 torreCurativa :: Personaje -> Personaje
 torreCurativa aliado = vidaAequipo aliado (cantidadDeVida aliado)
+
+poderEspecialEspina :: Personaje -> Personaje
+poderEspecialEspina contrincante = (bolaEspinosa.granadaDeEspinas contrincante) 5 
+
+poderEspecialPamela :: Personaje -> Personaje
+poderEspecialPamela jugador = ((lluviaDeTuercas "mismo equipo").torreCurativa) jugador
 
 ataquePoderEspecial :: Personaje -> Personaje -> Personaje
 ataquePoderEspecial personaje contrincante
