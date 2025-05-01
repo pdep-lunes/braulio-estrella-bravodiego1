@@ -25,55 +25,88 @@ pamela = UnPersonaje {
     poderBasico= "Lluvia de tuercas",
     superPoder ="Torre curativa",
     superPoderActivo = False,
-    cantidadDeVida = 600
+    cantidadDeVida = 9600
 }
 
-restandoVida :: Int -> Int -> Int
-restandoVida vida danio = max (vida - danio) 0
+type Daño = Int
+type Vida = Int
+type Agregado = Int
+type Radio = Int
+type Modificacion = Int
+type TipoDeModificacion = String
+type Equipo = String
 
-hacerDanio :: Personaje -> Int -> Personaje
-hacerDanio contrincante danio = contrincante {cantidadDeVida  = restandoVida (cantidadDeVida contrincante) danio}
+-- Funciones secundarias
 
-sumandoVida :: Int -> Int -> Int
-sumandoVida vida agregado = (+vida) agregado
+modificandoVida :: Vida -> Modificacion -> TipoDeModificacion -> Vida
+modificandoVida vida modificacion tipo
+    | tipo == "sumar vida" = (+vida) modificacion
+    | tipo == "restar vida" = max (vida - modificacion) 0
+    | otherwise = vida
 
-vidaAequipo :: Personaje -> Int -> Personaje
-vidaAequipo compaDeEquipo agregado = compaDeEquipo {cantidadDeVida = sumandoVida (cantidadDeVida compaDeEquipo) agregado}
+hacerDanio :: Personaje -> Daño -> Personaje
+hacerDanio contrincante danio = contrincante {cantidadDeVida  = modificandoVida (cantidadDeVida contrincante) danio "restar vida"}
 
--- TRATAR DE JUNTAR hacerDanio Y vidaAequipo PARA NO REPETIR LOGICA
+vidaAequipo :: Personaje -> Agregado -> Personaje
+vidaAequipo aliado agregado = aliado {cantidadDeVida = modificandoVida (cantidadDeVida aliado) agregado "sumar vida"} 
+
+esMayorA3 :: Int -> Bool
+esMayorA3 valor = valor >= 3
+
+cambioNombre :: String -> String
+cambioNombre nombre = nombre ++ " ...Espina estuvo aqui"
+
+vidaMenorA :: Personaje -> Int -> Bool
+vidaMenorA personaje valor = cantidadDeVida personaje < valor 
+
+tieneElSuperActivo :: Personaje -> String
+tieneElSuperActivo personaje 
+    | superPoderActivo personaje = "Si"
+    | otherwise = "No"
+
+poderEspecialEspina :: Personaje -> Personaje
+poderEspecialEspina contrincante = (bolaEspinosa.granadaDeEspinas contrincante) 5 
+
+poderEspecialPamela :: Personaje -> Personaje
+poderEspecialPamela jugador = ((lluviaDeTuercas "mismo equipo").torreCurativa) jugador
+
+tienePocaVidaOno :: Personaje -> String
+tienePocaVidaOno personaje
+    | cantidadDeVida personaje < 800 = "El personaje esta en las ultimas"
+    | otherwise = "El personaje se encuentra bien"
+
+-- Funciones principales: 
 
 bolaEspinosa :: Personaje -> Personaje
 bolaEspinosa contrincante = hacerDanio contrincante 1000
 
-lluviaDeTuercas :: Personaje -> Bool -> Personaje 
-lluviaDeTuercas jugador mismoEquipo 
-    | mismoEquipo = vidaAequipo jugador 800
-    | otherwise = hacerDanio jugador (div (cantidadDeVida jugador) 2) 
+lluviaDeTuercas :: Equipo -> Personaje -> Personaje 
+lluviaDeTuercas equipo jugador
+    | equipo == "mismo equipo" = vidaAequipo jugador 800
+    | equipo == "distinto equipo" = hacerDanio jugador ((div (cantidadDeVida jugador)) 2) 
+    | otherwise = jugador
 
-granadaDeEspinas :: Personaje -> Int -> Personaje
+granadaDeEspinas :: Personaje -> Radio -> Personaje
 granadaDeEspinas contrincante radio
-    | radio > 3 && cantidadDeVida contrincante < 800 = contrincante {
-          nombre = nombre contrincante ++ " ...Espina estuvo aqui",
+    | esMayorA3 radio && vidaMenorA contrincante 800 = contrincante {
+          nombre = cambioNombre (nombre contrincante),
           superPoderActivo = False,
           cantidadDeVida = 0
-      }
-    | radio > 3 = contrincante {nombre = nombre contrincante ++ " ...Espina estuvo aqui"}
+      } 
+    | esMayorA3 radio = contrincante {nombre = nombre contrincante ++ " ...Espina estuvo aqui"}
     | otherwise = bolaEspinosa contrincante
 
 torreCurativa :: Personaje -> Personaje
-torreCurativa compaDeEquipo = vidaAequipo compaDeEquipo (cantidadDeVida compaDeEquipo)
+torreCurativa aliado = vidaAequipo aliado (cantidadDeVida aliado)
 
-ataquePoderEspecialEspina :: Personaje -> Int -> Personaje
-ataquePoderEspecialEspina contrincante radio
-    | superPoderActivo contrincante = (bolaEspinosa.granadaDeEspinas contrincante) radio
-    | otherwise = bolaEspinosa contrincante 
-
--- ataquePoderEspecialPamela :: Personaje -> Personaje
--- ataquePoderEspecialPamela jugador =
+ataquePoderEspecial :: Personaje -> Personaje -> Personaje
+ataquePoderEspecial personaje contrincante
+    | (tieneElSuperActivo personaje == "Si" && nombre personaje == "Espina") = poderEspecialEspina contrincante
+    | (tieneElSuperActivo personaje == "Si" && nombre personaje == "Pamela") = poderEspecialPamela contrincante
+    | otherwise = contrincante 
 
 enLasUltimas :: Personaje -> String
-enLasUltimas personaje
-    | cantidadDeVida personaje < 800 = "El personaje esta en las ultimas"
-    | otherwise = "El personaje no esta en las ultimas"
+enLasUltimas personaje = tienePocaVidaOno personaje
+    
 
 
