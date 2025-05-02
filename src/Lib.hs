@@ -36,7 +36,11 @@ type Modificacion = Int
 type TipoDeModificacion = String
 type Equipo = String
 type Nombre = String
+type Equipos = [Personaje]
 
+equipo :: Equipos
+equipo = [espina,pamela]
+-- usar ELEM para ver si un personaje esta dentro de un equipo
 -- Funciones secundarias
 
 modificandoVida :: Vida -> Modificacion -> TipoDeModificacion -> Vida
@@ -58,16 +62,11 @@ cambioNombre :: Nombre -> Nombre
 cambioNombre nombre = nombre ++ " ...Espina estuvo aqui"
 
 vidaMenorA :: Personaje -> Int -> Bool
-vidaMenorA personaje valor = cantidadDeVida personaje < valor 
+vidaMenorA personaje valor = (<valor) (cantidadDeVida personaje)  
 
-tieneElSuperActivo :: Personaje -> String
-tieneElSuperActivo personaje 
-    | superPoderActivo personaje = "Si"
-    | otherwise = "No"
-
-tienePocaVidaOno :: Personaje -> String
-tienePocaVidaOno personaje
-    | cantidadDeVida personaje < 800 = "El personaje esta en las ultimas"
+tienePocaVida :: Personaje -> String
+tienePocaVida personaje
+    | vidaMenorA personaje 800 = "El personaje esta en las ultimas"
     | otherwise = "El personaje se encuentra bien"
 
 -- Funciones principales: 
@@ -102,12 +101,12 @@ poderEspecialPamela jugador = ((lluviaDeTuercas "mismo equipo").torreCurativa) j
 
 ataquePoderEspecial :: Personaje -> Personaje -> Personaje
 ataquePoderEspecial personaje contrincante
-    | (tieneElSuperActivo personaje == "Si" && nombre personaje == "Espina") = poderEspecialEspina contrincante
-    | (tieneElSuperActivo personaje == "Si" && nombre personaje == "Pamela") = poderEspecialPamela contrincante
+    | (superPoderActivo personaje && nombre personaje == "Espina") = poderEspecialEspina contrincante
+    | (superPoderActivo personaje && nombre personaje == "Pamela") = poderEspecialPamela contrincante
     | otherwise = contrincante 
 
 enLasUltimas :: Personaje -> String
-enLasUltimas personaje = tienePocaVidaOno personaje
+enLasUltimas personaje = tienePocaVida personaje
     
 
 
