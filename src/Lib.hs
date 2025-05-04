@@ -7,7 +7,7 @@ data Personaje = UnPersonaje {
     superPoder :: String,
     superPoderActivo :: Bool,
     cantidadDeVida :: Int
-    } deriving Show
+    } deriving (Show, Eq)
 
 
 espina :: Personaje
@@ -33,15 +33,15 @@ type Vida = Int
 type Agregado = Int
 type Radio = Int
 type Modificacion = Int
-type TipoDeModificacion = String
-type Equipo = String
+type TipoDeModificacion = String 
 type Nombre = String
 type Equipos = [Personaje]
 
-equipo :: Equipos
-equipo = [espina,pamela]
--- usar ELEM para ver si un personaje esta dentro de un equipo
--- Funciones secundarias
+team :: Equipos
+team = [espina,pamela]
+
+team2 :: Equipos
+team2 = []
 
 modificandoVida :: Vida -> Modificacion -> TipoDeModificacion -> Vida
 modificandoVida vida modificacion tipo
@@ -54,6 +54,9 @@ hacerDanio contrincante danio = contrincante {cantidadDeVida  = modificandoVida 
 
 vidaAequipo :: Personaje -> Agregado -> Personaje
 vidaAequipo aliado agregado = aliado {cantidadDeVida = modificandoVida (cantidadDeVida aliado) agregado "sumar vida"} 
+
+esDelMismoEquipo :: Personaje -> Equipos -> Bool
+esDelMismoEquipo jugador equipo = (elem jugador) equipo
 
 esMayorA3 :: Int -> Bool
 esMayorA3 valor = valor >= 3
@@ -74,11 +77,12 @@ tienePocaVida personaje
 bolaEspinosa :: Personaje -> Personaje
 bolaEspinosa contrincante = hacerDanio contrincante 1000
 
-lluviaDeTuercas :: Equipo -> Personaje -> Personaje 
-lluviaDeTuercas equipo jugador
-    | equipo == "mismo equipo" = vidaAequipo jugador 800
-    | equipo == "distinto equipo" = hacerDanio jugador ((div (cantidadDeVida jugador)) 2) 
+lluviaDeTuercas :: Personaje -> Equipos -> Personaje
+lluviaDeTuercas jugador equipo 
+    | esDelMismoEquipo jugador equipo = vidaAequipo jugador 800
+    | (not.esDelMismoEquipo jugador) equipo = hacerDanio jugador ((div (cantidadDeVida jugador)) 2) 
     | otherwise = jugador
+
 
 granadaDeEspinas :: Personaje -> Radio -> Personaje
 granadaDeEspinas contrincante radio
@@ -96,13 +100,13 @@ torreCurativa aliado = vidaAequipo aliado (cantidadDeVida aliado)
 poderEspecialEspina :: Personaje -> Personaje
 poderEspecialEspina contrincante = (bolaEspinosa.granadaDeEspinas contrincante) 5 
 
-poderEspecialPamela :: Personaje -> Personaje
-poderEspecialPamela jugador = ((lluviaDeTuercas "mismo equipo").torreCurativa) jugador
+poderEspecialPamela :: Personaje -> Equipos -> Personaje
+poderEspecialPamela jugador equipo = (torreCurativa.lluviaDeTuercas jugador) equipo
 
 ataquePoderEspecial :: Personaje -> Personaje -> Personaje
 ataquePoderEspecial personaje contrincante
     | (superPoderActivo personaje && nombre personaje == "Espina") = poderEspecialEspina contrincante
-    | (superPoderActivo personaje && nombre personaje == "Pamela") = poderEspecialPamela contrincante
+    | (superPoderActivo personaje && nombre personaje == "Pamela") = poderEspecialPamela contrincante team
     | otherwise = contrincante 
 
 enLasUltimas :: Personaje -> String
