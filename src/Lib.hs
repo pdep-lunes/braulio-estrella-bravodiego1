@@ -43,17 +43,16 @@ team = [espina,pamela]
 team2 :: Equipos
 team2 = []
 
-modificandoVida :: Vida -> Modificacion -> TipoDeModificacion -> Vida
-modificandoVida vida modificacion tipo
-    | tipo == "sumar vida" = (+vida) modificacion
-    | tipo == "restar vida" = max (vida - modificacion) 0
-    | otherwise = vida
+modificandoVida :: TipoDeModificacion -> Vida -> Modificacion -> Vida
+modificandoVida "sumar vida" vida modificacion = (+vida) modificacion
+modificandoVida "restar vida" vida modificacion = max (vida - modificacion) 0
+modificandoVida _ vida _ = vida
 
 hacerDanio :: Personaje -> Daño -> Personaje
-hacerDanio contrincante danio = contrincante {cantidadDeVida  = modificandoVida (cantidadDeVida contrincante) danio "restar vida"}
+hacerDanio contrincante danio = contrincante {cantidadDeVida  = modificandoVida "restar vida" (cantidadDeVida contrincante) danio}
 
 vidaAequipo :: Personaje -> Agregado -> Personaje
-vidaAequipo aliado agregado = aliado {cantidadDeVida = modificandoVida (cantidadDeVida aliado) agregado "sumar vida"} 
+vidaAequipo aliado agregado = aliado {cantidadDeVida = modificandoVida "sumar vida" (cantidadDeVida aliado) agregado} 
 
 esDelMismoEquipo :: Personaje -> Equipos -> Bool
 esDelMismoEquipo jugador equipo = (elem jugador) equipo
