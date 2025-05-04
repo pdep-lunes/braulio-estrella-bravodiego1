@@ -43,6 +43,8 @@ team = [espina,pamela]
 team2 :: Equipos
 team2 = []
 
+-- Funciones secundarias: 
+
 modificandoVida :: TipoDeModificacion -> Vida -> Modificacion -> Vida
 modificandoVida "sumar vida" vida modificacion = (+vida) modificacion
 modificandoVida "restar vida" vida modificacion = max (vida - modificacion) 0
@@ -81,7 +83,6 @@ lluviaDeTuercas jugador equipo
     | esDelMismoEquipo jugador equipo = vidaAequipo jugador 800
     | (not.esDelMismoEquipo jugador) equipo = hacerDanio jugador ((div (cantidadDeVida jugador)) 2) 
     | otherwise = jugador
-
 
 granadaDeEspinas :: Personaje -> Radio -> Personaje
 granadaDeEspinas contrincante radio
